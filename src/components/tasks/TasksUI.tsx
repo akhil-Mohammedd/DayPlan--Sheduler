@@ -21,8 +21,10 @@ import {
 import type { Priority, Task } from '../../types';
 import { PRIORITIES } from '../../types';
 import {
+  bulkDelete,
   changePriority,
   completeTask,
+  createTask,
   deleteTask,
   duplicateTask,
   postponeToTomorrow,
@@ -144,7 +146,6 @@ export function TaskItem({
         label: 'Undo',
         onClick: async () => {
           try {
-            const { createTask } = await import('../../services/taskService');
             await createTask(task);
           } catch {
             push('error', 'Could not restore the task.');
@@ -469,16 +470,15 @@ export function TaskList({
 
   const runBulk = async (action: 'complete' | 'delete' | 'postpone' | 'skip') => {
     const ids = [...selected];
-    const t = await import('../../services/taskService');
     try {
       if (action === 'complete') {
-        await Promise.all(ids.map((id) => t.completeTask(id)));
+        await Promise.all(ids.map((id) => completeTask(id)));
       } else if (action === 'delete') {
-        await t.bulkDelete(ids);
+        await bulkDelete(ids);
       } else if (action === 'postpone') {
-        await Promise.all(ids.map((id) => t.postponeToTomorrow(id)));
+        await Promise.all(ids.map((id) => postponeToTomorrow(id)));
       } else if (action === 'skip') {
-        await Promise.all(ids.map((id) => t.skipOccurrence(id)));
+        await Promise.all(ids.map((id) => skipOccurrence(id)));
       }
       push('success', `${ids.length} task(s) updated.`);
       setSelected(new Set());
@@ -597,7 +597,6 @@ export function QuickAdd({
       priority = priMatch[1]!.toLowerCase() as Priority;
       titlePart = titlePart.replace(priMatch[0], '');
     }
-    const { createTask } = await import('../../services/taskService');
     try {
       await createTask({
         title: titlePart.trim() || title,

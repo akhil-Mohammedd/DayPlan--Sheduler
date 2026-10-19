@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { WarningCircle } from '@phosphor-icons/react';
 import { AppShell, type Route, NAV } from './components/layout/AppShell';
 import { LoadingScreen } from './components/layout/LoadingScreen';
@@ -7,14 +7,6 @@ import { CursorFollower } from './components/motion/CursorFollower';
 import { StatusPage } from './components/system/StatusPage';
 import { NotFoundPage } from './features/system/NotFoundPage';
 import { Dialog, Input, ToastProvider, Button, EmptyState } from './components/ui';
-import { DashboardPage } from './features/dashboard/DashboardPage';
-import { SchedulePage } from './features/scheduler/SchedulePage';
-import { TasksPage } from './features/tasks/TasksPage';
-import { RecurringPage } from './features/tasks/RecurringPage';
-import { HabitsPage } from './features/habits/HabitsPage';
-import { StatsPage } from './features/stats/StatsPage';
-import { SettingsPage } from './features/settings/SettingsPage';
-import { FocusTimerPage } from './features/focus/FocusTimerPage';
 import {
   useAllTasks,
   applyFilter,
@@ -30,6 +22,47 @@ import { TaskForm } from './components/tasks/TaskForm';
 import { TaskItem } from './components/tasks/TasksUI';
 
 const STORAGE_ROUTE = 'dayplan-route';
+
+const DashboardPage = lazy(() =>
+  import('./features/dashboard/DashboardPage').then((module) => ({
+    default: module.DashboardPage,
+  })),
+);
+const SchedulePage = lazy(() =>
+  import('./features/scheduler/SchedulePage').then((module) => ({
+    default: module.SchedulePage,
+  })),
+);
+const TasksPage = lazy(() =>
+  import('./features/tasks/TasksPage').then((module) => ({
+    default: module.TasksPage,
+  })),
+);
+const RecurringPage = lazy(() =>
+  import('./features/tasks/RecurringPage').then((module) => ({
+    default: module.RecurringPage,
+  })),
+);
+const HabitsPage = lazy(() =>
+  import('./features/habits/HabitsPage').then((module) => ({
+    default: module.HabitsPage,
+  })),
+);
+const StatsPage = lazy(() =>
+  import('./features/stats/StatsPage').then((module) => ({
+    default: module.StatsPage,
+  })),
+);
+const SettingsPage = lazy(() =>
+  import('./features/settings/SettingsPage').then((module) => ({
+    default: module.SettingsPage,
+  })),
+);
+const FocusTimerPage = lazy(() =>
+  import('./features/focus/FocusTimerPage').then((module) => ({
+    default: module.FocusTimerPage,
+  })),
+);
 
 /** Every route the app can actually render; anything else is a 404. */
 function isKnownRoute(value: string | null | undefined): value is Route {
@@ -50,6 +83,17 @@ function readInitialRoute(): Route {
     /* localStorage may be blocked; defaults are fine */
   }
   return 'dashboard';
+}
+
+function RouteLoading() {
+  return (
+    <div role="status" aria-label="Loading page" className="space-y-5 py-2">
+      <div className="skeleton h-8 w-40" />
+      <div className="skeleton h-4 w-56" />
+      <div className="skeleton h-40 w-full rounded-xl" />
+      <span className="sr-only">Loading page</span>
+    </div>
+  );
 }
 
 export function App() {
@@ -205,7 +249,9 @@ function AppInner() {
             }
           />
         ) : (
-          renderRoute()
+          <Suspense fallback={<RouteLoading />}>
+            {renderRoute()}
+          </Suspense>
         )}
         </ErrorBoundary>
       </AppShell>
