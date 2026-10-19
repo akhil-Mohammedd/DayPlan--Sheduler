@@ -80,14 +80,20 @@ Everything is stored in **IndexedDB** (`dayplan-db`) via [Dexie.js](https://dexi
    - **Replace** — wipes current data, but a safety backup of your current state is downloaded automatically first.
 4. Malformed or unsupported files are rejected with an error and your existing data is untouched.
 
-## Deployment (static hosting)
+## Deployment (free GitHub Pages)
 
-The build is a fully static bundle; deploy `dist/` anywhere:
+This public repository deploys to GitHub Pages with the workflow in
+`.github/workflows/deploy.yml`. In the GitHub repository, open **Settings → Pages**
+and set the build and deployment source to **GitHub Actions**. Every push to
+`main` then builds and deploys the site automatically. The site URL is
+<https://akhil-Mohammedd.github.io/DayPlan--Sheduler/>.
 
-- **Netlify / Vercel / Cloudflare Pages**: set build command `npm run build`, publish directory `dist`.
-- **GitHub Pages**: run `npm run build`, commit/push `dist/` to a `gh-pages` branch (or use any GitHub Action that does so).
+For local production checks, run `npm run build` and `npm run preview`. The
+workflow sets the GitHub Pages base path automatically; local development keeps
+using `/`.
 
-Remember: the deployed origin will have its *own* empty database on first visit — export/import a JSON backup to move your data between origins.
+Remember: the deployed origin has its *own* empty database on first visit —
+export/import a JSON backup to move your data between origins.
 
 ## Project structure
 
