@@ -1,0 +1,21 @@
+[Unit]
+Description=DayPlan static web server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=C:\\Users\\makhi\\FreeBuffProjects\\daily-scheduler
+
+# Run via cmd.exe to launch the batch file that starts the PowerShell helper
+ExecStart=C:\\Windows\\System32\\cmd.exe /c "C:\\Users\\makhi\\FreeBuffProjects\\daily-scheduler\\start-dayplan-server.bat"
+
+Restart=always
+RestartSec=5
+TimeoutStartSec=15
+Environment=NODE_ENV=production
+
+# Required for Windows service account to run GUI/background node child process
+User=makhi
+
+[Install]
+WantedBy=multi-user.target

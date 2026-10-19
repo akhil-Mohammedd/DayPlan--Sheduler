@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build and test output
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+*.bak
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Temporary development artifacts and browser profiles
+.tmp-*
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Duplicate Claude-local skill cache; project skills live in .agents/
+.claude/
